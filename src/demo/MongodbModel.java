@@ -19,7 +19,7 @@ public class MongodbModel {
 	/**
 	 * 保存数据
 	 */
-	public void save(String name,String sex,int age,int no) {
+	public void save(String name,String sex,int age,String no) {
 		Document doc=new Document();
 		doc.append("name", name);
 		doc.append("sex",sex);
@@ -30,8 +30,10 @@ public class MongodbModel {
 	/**
 	 * 删除
 	 */
-	public void del() {
-		
+	public void del(String no) {
+		Document d=new Document();
+		d.append("no", no);
+		this.collection.deleteMany(d);
 	}
 	/**
 	 * 查询

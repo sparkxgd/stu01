@@ -39,16 +39,42 @@ $.ajax({
 			arr.push(list[i].age);
 			arr.push("</td>");
 			arr.push("<td>");
-			arr.push("删除|修改");
+			arr.push("<input type='button' value='删除'  onclick='del("+list[i].no+")'>");
+			arr.push("<input type='button' value='修改'  onclick='updata("+list[i].no+")'>");
 			arr.push("</td>");
 			
 			arr.push("</tr>");
 		}
 		
-		alert(arr.join(''));
 		$('tbody').append(arr.join(''));
 	}
 })
+
+
+function add(){
+	window.location.href="openadd";
+}
+function del(no){
+
+	$.ajax({
+		url:"del",
+		type:"post",
+		dataType:"json",
+		data:{'no':no},
+		success:function(r){
+			alert("删除成功！！！");
+			window.location.reload();
+		}
+	});
+	
+
+}
+
+
+function  updata(no){
+	window.location.href="openupdata";
+	
+}
 
 </script>
 
@@ -56,6 +82,10 @@ $.ajax({
 <body>
 欢迎进入学生信息管理系统的主页面！！！！！！！！
 
+
+<hr>
+
+<input type="button" value="添加"  onclick="add()">
 <table>
 <thead>
 

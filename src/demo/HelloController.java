@@ -80,21 +80,48 @@ public class HelloController extends Controller {
  	setAttr("list", doclist);
  	renderJson();
    }
-    
+    /**
+     * 打开添加信息页面
+     */
+   public void openadd() {
+	   render("add.html");
+   }
+   /**
+    * 保存数据
+    */
+   public void add() {
+	   
+	   String no=getPara("no");
+	   String name=getPara("name");
+	   String sex=getPara("sex");
+	   int age=getParaToInt("age");
+	   
+	   MongodbModel m=new MongodbModel("studentinfo");
+	   m.save(name, sex, age, no);
+	   redirect("openmain");
+	   
+   }
+   /**
+    * 根据学号删除
+    */
+   public void del() {
+	   String no =getPara("no");
+	   MongodbModel m=new MongodbModel("studentinfo");
+	   m.del(no);
+	   renderJson();
+	   
+   }
    
+   /*
+    * 打开更新页面
+    */
+   public void openupdata() {
+	   render("updata.html");
+	   
+   }
    
    
     public void opentest() {
     	render("test.html");
-    }
-    public void save() {
-    	String name=getPara("name");
-    	String sex=getPara("sex");
-    	int age=getParaToInt("age");
-    	int no= getParaToInt("no");
-    	
-    	MongodbModel m=new MongodbModel("test");
-    	m.save(name, sex, age, no);
-    			
     }
 }
