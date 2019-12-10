@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>学生信息管理主页面</title>
+<script type="text/javascript" src="../js/jquery-3.4.1.min.js"></script>
+<style type="text/css">
+
+table tr td{
+	border: 1px solid;
+}
+
+
+</style>
+
+<script type="text/javascript">
+
+$.ajax({
+	url:"getstudents",
+	type:"post",
+	dataType:"json",
+	data:{},
+	success:function(r){
+		var list=r.list;
+		var arr=[];
+		for(var i=0;i<list.length;i++){
+			
+			arr.push("<tr>");
+			arr.push("<td>");
+			arr.push(list[i].no);
+			arr.push("</td>");
+			arr.push("<td>");
+			arr.push(list[i].name);
+			arr.push("</td>");
+			arr.push("<td>");
+			arr.push(list[i].sex);
+			arr.push("</td>");
+			arr.push("<td>");
+			arr.push(list[i].age);
+			arr.push("</td>");
+			arr.push("<td>");
+			arr.push("删除|修改");
+			arr.push("</td>");
+			
+			arr.push("</tr>");
+		}
+		
+		alert(arr.join(''));
+		$('tbody').append(arr.join(''));
+	}
+})
+
+</script>
+
+</head>
+<body>
+欢迎进入学生信息管理系统的主页面！！！！！！！！
+
+<table>
+<thead>
+
+<tr>
+<td>学号</td>
+<td>姓名</td>
+<td>性别</td>
+<td>年龄</td>
+<td>操作</td>
+</tr>
+
+</thead>
+<tbody>
+
+</tbody>
+</table>
+
+
+</body>
+</html>
