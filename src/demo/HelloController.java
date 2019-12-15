@@ -1,12 +1,9 @@
 package demo;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
 
 import com.jfinal.core.Controller;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 public class HelloController extends Controller {
     public void index() {
        renderText("Hello JFinal World.");
@@ -21,107 +18,130 @@ public class HelloController extends Controller {
      * 登录
      */
     public void login() {
-    	/**
-    	 * 1、获取页面的用户名和密码
-    	 * 2、获取mongodb数据库的用户名和密码
-    	 * 2、判断用户名是否存在？
-    	 * 2.1、如果存在，判断密码
-    	 * 2.2、如果不存在，提示用户不存在，
-    	 * 3、判断密码
-    	 * 3.1、如果密码正确，就进入主页面
-    	 * 3.2、如果密码错误，提示密码错误
-    	 */
+    	//1、判断用户名是否存在？
+    	//2、如果存在，就判断密码？
+    	//3、如果密码正确，就跳入主页面
+    	//4、如果密码错误，就回到登录页面，提示密码错位
+    	//5、如果用户不存在，就回到登录页面，提示用户不存在
     	
     	String username=getPara("username");
     	String password=getPara("password");
     	
-    	//获取mongodb数据库的用户名和密码
-    	MongodbModel user=new MongodbModel("userinfo");
-    	MongoCursor<Document> cs=user.getUserByUsername(username).iterator();
-    	 List<Document> doclist=new ArrayList<Document>();
-         while(cs.hasNext()){  
-      	   doclist.add(cs.next());
-         } 
-    	if(doclist.size()>0) {//2、判断用户名是否存在？说明有这个人
-    		//2.1、如果存在，判断密码
-    		String pw=doclist.get(0).getString("passsword");
-    		if(password.equals(pw)) {//3.1、如果密码正确，就进入主页面
-    			setAttr("result", 0);//0代表登录成功，可以进入主页面
+    	//模拟mongodb数据库的用户名和密码
+    	StudentModel stus=new StudentModel();
+    	Document query=new Document();
+    	query.append("username", username);
+    	
+    	List<Document> docs=stus.find(query);
+    	
+    	if(docs.size()>0) {//说明用户名存在
+    		String pw=docs.get(0).getString("passsword");
+    		if(password.equals(pw)) {
+    			setAttr("result", 0);//密码正确
     			renderJson();
-    			
-    		}else {//3.2、如果密码错误，提示密码错误
-    			setAttr("result", 1);//1代表密码错误
+    		}else {
+    			setAttr("result", 1);//密码错误
     			renderJson();
     		}
-    		
-    	}else {//2.2、如果不存在，提示用户不存在，
-    		setAttr("result", -1);//0代表用户不存在
+    	}else {
+    		setAttr("result", -1);//用户名不存在
 			renderJson();
-    		
     	}
-    	
-    	
     }
-        
-   public void openmain() {
+    /**
+     * 进入主页面
+     */
+    public void main() {
     	render("main.html");
     }
-    
-   /**
-         * 获取学生信息
-    */
-   public void getstudents() {
-	   MongodbModel m=new MongodbModel("studentinfo");
-	   MongoCursor<Document> mongoCursor = m.find().iterator(); 
- 	  List<Document> doclist=new ArrayList<Document>();
-        while(mongoCursor.hasNext()){  
-     	   doclist.add(mongoCursor.next());
-        }  
- 	setAttr("list", doclist);
- 	renderJson();
-   }
     /**
-     * 打开添加信息页面
+     * 获取学生信息列表
      */
-   public void openadd() {
-	   render("add.html");
-   }
-   /**
-    * 保存数据
-    */
-   public void add() {
-	   
-	   String no=getPara("no");
-	   String name=getPara("name");
-	   String sex=getPara("sex");
-	   int age=getParaToInt("age");
-	   
-	   MongodbModel m=new MongodbModel("studentinfo");
-	   m.save(name, sex, age, no);
-	   redirect("openmain");
-	   
-   }
-   /**
-    * 根据学号删除
-    */
-   public void del() {
-	   String no =getPara("no");
-	   MongodbModel m=new MongodbModel("studentinfo");
-	   m.del(no);
-	   renderJson();
-	   
-   }
-   
-   /*
-    * 打开更新页面
-    */
-   public void openupdata() {
-	   render("updata.html");
-	   
-   }
-   
-   
-    public void opentest() {
-    	render("test.html");
+    public void getstudents() {
+    	String no=getPara("no","");
+    	StudentModel stu=new StudentModel();
+    	List<Document> list=stu.query(no);//到mongodb数据拿数据
+    	setAttr("list", list);
+    	renderJson();   
+    	
     }
+    /**
+     * 打开添加
+     */
+    public void openaddstu() {
+    	render("addstu.html");
+    }
+    /**
+     * 保存学生信息
+     */
+    public void savestu() {
+    	String no=getPara("no");
+    	String name=getPara("name");
+    	String sex=getPara("sex");
+    	String age=getPara("age");
+    	
+    	StudentModel m=new StudentModel();
+    	
+    	Document doc=new Document();
+    	doc.append("no", no);
+    	doc.append("name", name);
+    	doc.append("sex", sex);
+    	doc.append("age", age);
+    	
+    	m.insert(doc);
+    	redirect("main");
+    }
+    /**
+     * 删除学生信息
+     */
+    public void delstu() {
+    	String no=getPara("no");
+    	
+    	StudentModel m=new StudentModel();
+    	Document doc=new Document();
+    	doc.append("no", no);
+    	
+    	m.delete(doc);
+    	
+    	renderJson();
+    	
+    }
+    
+	/**
+	 * 打开编辑页面
+	 */
+	public void openedit() {
+		String no = getPara("no");
+		setAttr("no", no);
+		renderFreeMarker("stuedit.html");
+	}
+
+	/**
+	 * 获取学生信息，用来编辑
+	 */
+	public void getstubyno() {
+		String no = getPara("no");
+		StudentModel m = new StudentModel();
+		List<Document> list = m.find(new Document("no", no));
+		setAttr("m", list.get(0));
+		renderJson();
+	}
+
+	public void updatastu() {
+
+		String no = getPara("no");
+		String name = getPara("name");
+		String sex = getPara("sex");
+		int age = getParaToInt("age");
+
+		StudentModel m = new StudentModel();
+		Document data = new Document();
+		data.append("no", no);
+		data.append("sex", sex);
+		data.append("age", age);
+		data.append("name", name);
+		m.updataOne(data);
+		redirect("main");
+
+	}
 }

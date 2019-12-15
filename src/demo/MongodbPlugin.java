@@ -11,13 +11,23 @@ import com.mongodb.client.MongoDatabase;
  */
 public class MongodbPlugin implements IPlugin{
 	public static MongoDatabase mongoDatabase;//链接mongodb的数据库
+	private String host;
+	private int port;
+	private String dbname;
+	private MongoClient mongoClient;
+	
+	public MongodbPlugin(String host,int port,String dbname) {
+		this.host=host;
+		this.port=port;
+		this.dbname=dbname;
+	}
 	@Override
 	public boolean start() {
 		try {
-			// 连接到 mongodb 服务
-			MongoClient mongoClient= new MongoClient( "120.79.42.237" , 27017 );
+			// 连接到 mongodb 服务120.79.42.237
+			mongoClient= new MongoClient(host,port);
+			mongoDatabase=mongoClient.getDatabase(dbname);
 	         // 连接到数据库
-	        mongoDatabase = mongoClient.getDatabase("student"); 
 		} catch (Exception e) {
 			return false;
 		}
@@ -26,8 +36,8 @@ public class MongodbPlugin implements IPlugin{
 
 	@Override
 	public boolean stop() {
-		// TODO Auto-generated method stub
-		return false;
+		mongoClient.close();
+		return true;
 	}
 
 }

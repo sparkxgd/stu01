@@ -14,50 +14,56 @@ table tr td{
 </style>
 
 <script type="text/javascript">
+$(document).ready(function(){
+	query();
+});
 
-$.ajax({
-	url:"getstudents",
-	type:"post",
-	dataType:"json",
-	data:{},
-	success:function(r){
-		var list=r.list;
-		var arr=[];
-		for(var i=0;i<list.length;i++){
+function query(){
+	$('tbody').empty();
+	$.ajax({
+		url:"getstudents",
+		type:"post",
+		dataType:"json",
+		data:{"no":$('#queryword').val()},
+		success:function(r){
+			var list=r.list;
+			var arr=[];
+			for(var i=0;i<list.length;i++){
+				
+				arr.push("<tr>");
+				arr.push("<td>");
+				arr.push(list[i].no);
+				arr.push("</td>");
+				arr.push("<td>");
+				arr.push(list[i].name);
+				arr.push("</td>");
+				arr.push("<td>");
+				arr.push(list[i].sex);
+				arr.push("</td>");
+				arr.push("<td>");
+				arr.push(list[i].age);
+				arr.push("</td>");
+				arr.push("<td>");
+				arr.push("<input type='button' value='删除'  onclick='del("+list[i].no+")'>");
+				arr.push("<input type='button' value='修改'  onclick='updata("+list[i].no+")'>");
+				arr.push("</td>");
+				
+				arr.push("</tr>");
+			}
 			
-			arr.push("<tr>");
-			arr.push("<td>");
-			arr.push(list[i].no);
-			arr.push("</td>");
-			arr.push("<td>");
-			arr.push(list[i].name);
-			arr.push("</td>");
-			arr.push("<td>");
-			arr.push(list[i].sex);
-			arr.push("</td>");
-			arr.push("<td>");
-			arr.push(list[i].age);
-			arr.push("</td>");
-			arr.push("<td>");
-			arr.push("<input type='button' value='删除'  onclick='del("+list[i].no+")'>");
-			arr.push("<input type='button' value='修改'  onclick='updata("+list[i].no+")'>");
-			arr.push("</td>");
-			
-			arr.push("</tr>");
+			$('tbody').append(arr.join(''));
 		}
-		
-		$('tbody').append(arr.join(''));
-	}
-})
+	})
 
+}
 
 function add(){
-	window.location.href="openadd";
+	window.location.href="openaddstu";
 }
 function del(no){
 
 	$.ajax({
-		url:"del",
+		url:"delstu",
 		type:"post",
 		dataType:"json",
 		data:{'no':no},
@@ -72,7 +78,7 @@ function del(no){
 
 
 function  updata(no){
-	window.location.href="openupdata";
+	window.location.href="openedit?no="+no;
 	
 }
 
@@ -86,6 +92,7 @@ function  updata(no){
 <hr>
 
 <input type="button" value="添加"  onclick="add()">
+<input type="text" id="queryword" placeholder="学号"><input type="button" onclick="query()" value="查询">
 <table>
 <thead>
 
