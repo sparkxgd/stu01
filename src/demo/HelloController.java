@@ -27,8 +27,8 @@ public class HelloController extends Controller {
     	String username=getPara("username");
     	String password=getPara("password");
     	
-    	//模拟mongodb数据库的用户名和密码
-    	StudentModel stus=new StudentModel();
+    	//mongodb数据库的用户名和密码
+    	UserModel stus=new UserModel();
     	Document query=new Document();
     	query.append("username", username);
     	
@@ -144,4 +144,16 @@ public class HelloController extends Controller {
 		redirect("main");
 
 	}
+	
+	public void getuser() {
+	
+		UserModel user=new UserModel();
+		Document query=new Document();
+		List<Document> list=user.find(query);
+		setAttr("user", list);
+		renderJson();
+		
+	}
+	
+	
 }
